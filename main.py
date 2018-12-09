@@ -6,6 +6,8 @@ import sys
 worker = None
 active_future = None
 
+BURGER_DATA_PREFIX = "https://pokechu22.github.io/Burger/"
+
 def update_result(*args, **kwargs):
     left = document.select("#version-main select")[0].value
     right = document.select("#version-diff select")[0].value
@@ -100,22 +102,22 @@ def update_result(*args, **kwargs):
         return
     elif left == "None":
         req = ajax.ajax()
-        req.open("GET", "https://pokechu22.github.io/Burger/" + right + ".json", True)
+        req.open("GET", BURGER_DATA_PREFIX + right + ".json", True)
         req.bind("complete", single)
         req.send()
     elif right == "None":
         req = ajax.ajax()
-        req.open("GET", "https://pokechu22.github.io/Burger/" + left + ".json", True)
+        req.open("GET", BURGER_DATA_PREFIX + left + ".json", True)
         req.bind("complete", single)
         req.send()
     else:
         callback = BothCallback()
         req = ajax.ajax()
-        req.open("GET", "https://pokechu22.github.io/Burger/" + left + ".json", True)
+        req.open("GET", BURGER_DATA_PREFIX + left + ".json", True)
         req.bind("complete", callback.onmain)
         req.send()
         req = ajax.ajax()
-        req.open("GET", "https://pokechu22.github.io/Burger/" + right + ".json", True)
+        req.open("GET", BURGER_DATA_PREFIX + right + ".json", True)
         req.bind("complete", callback.ondiff)
         req.send()
 
@@ -173,6 +175,6 @@ def initalize(request):
     update_result()
 
 req = ajax.ajax()
-req.open("GET", "https://pokechu22.github.io/Burger/versions.json", True)
+req.open("GET", BURGER_DATA_PREFIX + "versions.json", True)
 req.bind("complete", initalize)
 req.send()
