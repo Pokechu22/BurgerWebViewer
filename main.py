@@ -1,5 +1,6 @@
 from html import escape
 from browser import document, window, html, ajax, webworker, console
+from asyncio.futures import CancelledError
 import traceback
 import json
 import sys
