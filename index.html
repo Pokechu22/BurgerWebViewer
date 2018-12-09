@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Vitrine</title>
+<link rel="shortcut icon" href="static/favicon.ico" />
+<link rel="stylesheet" href="static/style.css" />
+<link rel="stylesheet" href="static/local.css" />
+<link rel="pythonpath" href="https://cdn.rawgit.com/Pokechu22/Hamburglar/089921ce/" />
+<link rel="pythonpath" href="https://cdn.rawgit.com/Pokechu22/BurgerVitrine/4fff27d1/" />
+<script type="text/javascript" src="brython/www/src/brython.js"></script>
+<script type="text/javascript" src="brython/www/src/brython_stdlib.js"></script>
+<script type="text/python" src="main.py"></script>
+</head>
+<body onload="brython(1)">
+    <div id="header">
+        <a href="/"><h1>Burger Vitrine</h1></a>
+        <div class="topmenu">
+            <div class="select" id="version-main">
+                <select disabled>
+                    <option value="None" selected>None</option>
+                </select>
+                <span>Loading</span>
+            </div>
+            <div class="select" id="version-diff">
+                <select disabled>
+                    <option value="None" selected>None</option>
+                </select>
+                <span>None</span>
+            </div>
+        </div>
+    </div>
+    <div id="vitrine">
+    <h2>Loading...</h2>
+    <noscript>
+    <div class="entry">Burger Vitrine requires JavaScript to be enabled.</div>
+    </noscript>
+    </div>
+    <footer>
+        <a href="https://github.com/pokechu22/Burger">GitHub</a>
+    </footer>
+</body>
+</html>
