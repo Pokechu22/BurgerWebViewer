@@ -142,6 +142,12 @@ $(".item, .texture, .craftitem").on("mouseover", function() {
 });
 """
 
+# Used by the sounds topping.
+def playSound(element):
+    link = element.dataset.link
+    element.parentElement.innerHTML = "<audio autoplay controls><source src=\"" + link + "\" type=\"audio/ogg\" /></audio>"
+window.playSound = playSound
+
 def initalize(request):
     versions = json.loads(request.responseText)
 
