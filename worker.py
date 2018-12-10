@@ -51,7 +51,7 @@ def hamburglar(main, diff):
 
     return hamburglar_main.compare(toppings, main[0], diff[0], progress_callback=progress_callback)
 
-def vitrine(data):
+def vitrine(data, all_data):
     progress_update('Vitrine: Importing vitrine')
     import vitrine_main
 
@@ -89,7 +89,8 @@ def vitrine_worker(message_name, message, src):
     try:
         print("vitrine_worker:", message)
         data = message.data.to_dict()
-        result = vitrine(json.loads(data['data']))
+        data = json.loads(data['data'])
+        result = vitrine(data, data)
     except:
         traceback.print_exc()
         result = '<div class="entry"><h3>Error</h3><pre>' + escape(traceback.format_exc()) + '</pre></div>'
@@ -100,9 +101,11 @@ def hamburglar_worker(message_name, message, src):
     try:
         print("hamburglar_worker:", message)
         data = message.data.to_dict()
-        combined = hamburglar(json.loads(data['main']), json.loads(data['diff']))
+        main = json.loads(data['main'])
+        diff = json.loads(data['diff'])
+        combined = hamburglar(main, diff)
         print("Halfway done")
-        result = vitrine(combined)
+        result = vitrine(combined, {False: main, True: diff})
     except:
         print("!!!")
         traceback.print_exc()

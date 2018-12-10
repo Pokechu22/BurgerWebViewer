@@ -150,8 +150,8 @@ def initalize(request):
 
     # https://stackoverflow.com/a/901144/3991344 (bleh)
     def getParameterByName(name):
-        regex = window.RegExp.new("[?&]" + name + "(=([^&#]*)|&|#|$)");
-        results = regex.exec(window.location.href);
+        regex = window.RegExp.new("[?&]" + name + "(=([^&#]*)|&|#|$)")
+        results = regex.exec(window.location.href)
         if not results or not results[2]:
             return None
         return window.decodeURIComponent(results[2].replace('+', " "))
