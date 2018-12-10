@@ -154,19 +154,11 @@ def initalize(request):
     if len(versions) < 1:
         raise Exception("No versions are available")
 
-    # https://stackoverflow.com/a/901144/3991344 (bleh)
-    def getParameterByName(name):
-        regex = window.RegExp.new("[?&]" + name + "(=([^&#]*)|&|#|$)")
-        results = regex.exec(window.location.href)
-        if not results or not results[2]:
-            return None
-        return window.decodeURIComponent(results[2].replace('+', " "))
-
-    main = getParameterByName("main")
+    main = document.query.getfirst("main", None)
     if main not in versions:
         main = versions[0]
 
-    diff = getParameterByName("diff")
+    diff = document.query.getfirst("diff", None)
     if diff not in versions:
         diff = "None"
 
