@@ -63,6 +63,7 @@ def update_result(*args, **kwargs):
                 active_future = None
                 try:
                     document.getElementById("vitrine").innerHTML = future.result().data.to_dict()['result']
+                    attach_tooltip_handlers()
                 except CancelledError:
                     pass
                 except:
@@ -140,9 +141,10 @@ def show_tooltip(event):
 def hide_tooltip(event):
     tooltip.style.display = "none"
 
-for element in document.select(".item, .texture, .craftitem"):
-    element.bind("mouseover", show_tooltip)
-    element.bind("mouseout", hide_tooltip)
+def attach_tooltip_handlers():
+    for element in document.select(".item, .texture, .craftitem"):
+        element.bind("mouseover", show_tooltip)
+        element.bind("mouseout", hide_tooltip)
 
 # Used by the sounds topping.
 def playSound(element):
