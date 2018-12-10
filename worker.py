@@ -105,7 +105,7 @@ def hamburglar_worker(message_name, message, src):
         diff = json.loads(data['diff'])
         combined = hamburglar(main, diff)
         print("Halfway done")
-        result = vitrine(combined, {False: main[0], True: diff[0]})
+        result = vitrine(combined, {0: main[0], 1: diff[0]})
     except:
         print("!!!")
         traceback.print_exc()
