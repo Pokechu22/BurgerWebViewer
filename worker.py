@@ -83,7 +83,7 @@ def vitrine(data, all_data):
         progress_update("Vitrine: " + name, num_updates, len(toppings))
         num_updates += 1
 
-    return vitrine_main.generate_html(toppings, data, progress_callback=progress_callback)
+    return vitrine_main.generate_html(toppings, data, all_data, progress_callback=progress_callback)
 
 def vitrine_worker(message_name, message, src):
     try:
