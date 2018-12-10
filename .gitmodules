@@ -2,3 +2,9 @@
 	path = brython
 	url = https://github.com/Pokechu22/brython
 	branch = fix-webworkers
+[submodule "Hamburglar"]
+	path = Hamburglar
+	url = https://github.com/pokechu22/Hamburglar
+[submodule "BurgerVitrine"]
+	path = BurgerVitrine
+	url = https://github.com/pokechu22/BurgerVitrine
