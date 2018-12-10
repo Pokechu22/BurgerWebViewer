@@ -126,21 +126,23 @@ document.select("#version-main select")[0].bind("change", update_result)
 document.select("#version-diff select")[0].bind("change", update_result)
 
 # Tooltips
-""" NYI
-document.select("body")[0] <= html.DIV(id="tooltip")
-$(document).mousemove(function(e) {
-    $("#tooltip").css({
-        top: (e.pageY - 30) + "px",
-        left: (e.pageX + 20) + "px"
-    });
-});
+tooltip = html.DIV(id="tooltip")
+document.select("body")[0] <= tooltip
+def mousemove(event):
+    tooltip.style.top = str(event.pageY - 30) + "px"
+    tooltip.style.left = str(event.pageX + 20) + "px"
+document.bind("mousemove", mousemove)
 
-$(".item, .texture, .craftitem").on("mouseover", function() {
-    $("#tooltip").show().html(this.title)
-}).on("mouseout", function() {
-    $("#tooltip").hide()
-});
-"""
+def show_tooltip(event):
+    tooltip.textContent = event.currentTarget.title
+    tooltip.style.display = "block"
+
+def hide_tooltip(event):
+    tooltip.style.display = "none"
+
+for element in document.select(".item, .texture, .craftitem"):
+    element.bind("mouseover", show_tooltip)
+    element.bind("mouseout", hide_tooltip)
 
 # Used by the sounds topping.
 def playSound(element):
