@@ -25,6 +25,7 @@ def hamburglar(main, diff):
         # Silly hardcoded thing; we can't go through all files here
         from hamburglar.toppings.achivements import AchivementsTopping
         from hamburglar.toppings.packets import PacketsTopping
+        from hamburglar.toppings.packets import MetadataSerializersTopping
         from hamburglar.toppings.recipes import RecipesTopping
         from hamburglar.toppings.stats import StatsTopping
         from hamburglar.toppings.tags import TagsTopping
@@ -38,7 +39,7 @@ def hamburglar(main, diff):
         from hamburglar.toppings.tileentities import TileEntitiesTopping
         from hamburglar.toppings.language import LanguageTopping
 
-        return (AchivementsTopping, PacketsTopping, RecipesTopping, StatsTopping, TagsTopping, VersionTopping, BiomesTopping, BlocksTopping, EntitiesTopping, ObjectsTopping, ItemsTopping, SoundsTopping, TileEntitiesTopping, LanguageTopping)
+        return (AchivementsTopping, PacketsTopping, MetadataSerializersTopping, RecipesTopping, StatsTopping, TagsTopping, VersionTopping, BiomesTopping, BlocksTopping, EntitiesTopping, ObjectsTopping, ItemsTopping, SoundsTopping, TileEntitiesTopping, LanguageTopping)
 
     progress_update('Hamburglar: Importing toppings')
     toppings = import_toppings()
@@ -63,6 +64,7 @@ def vitrine(data, all_data):
         from vitrine.toppings.language import LanguageTopping
         from vitrine.toppings.objects import ObjectsTopping
         from vitrine.toppings.packets import PacketsTopping
+        from vitrine.toppings.packets import MetadataSerializersTopping
         from vitrine.toppings.recipes import RecipesTopping
         from vitrine.toppings.sounds import SoundsTopping
         from vitrine.toppings.stats import StatsTopping
@@ -72,7 +74,7 @@ def vitrine(data, all_data):
         from vitrine.toppings.blocks import BlocksTopping
         from vitrine.toppings.items import ItemsTopping
 
-        return (AchievementsTopping, BiomesTopping, EntitiesTopping, LanguageTopping, ObjectsTopping, PacketsTopping, RecipesTopping, SoundsTopping, StatsTopping, TagsTopping, TileEntities, VersionsTopping, BlocksTopping, ItemsTopping)
+        return (AchievementsTopping, BiomesTopping, EntitiesTopping, LanguageTopping, ObjectsTopping, PacketsTopping, MetadataSerializersTopping, RecipesTopping, SoundsTopping, StatsTopping, TagsTopping, TileEntities, VersionsTopping, BlocksTopping, ItemsTopping)
 
     progress_update('Vitrine: Importing toppings')
     toppings = import_toppings()
