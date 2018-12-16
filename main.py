@@ -21,25 +21,23 @@ def update_result(*args, **kwargs):
     <progress id="vitrine-progress"></progress>
     </div>
     '''
-    progress_label = document.getElementById("vitrine-progress-label")
-    progress_bar = document.getElementById("vitrine-progress") # starts in indeterminate state
 
     def updates_vitrine(f):
         global worker
 
         if not worker:
-            progress_label.textContent = "Starting worker..."
+            document["vitrine-progress-label"].textContent = "Starting worker..."
             def progress_handler(message_name, message, src):
                 data = message.data.to_dict()
                 print("Progress update:", data)
 
-                progress_label.textContent = data['desc']
+                document["vitrine-progress-label"].textContent = data['desc']
                 if 'value' in data:
-                    progress_bar.max = data['max']
-                    progress_bar.value = data['value']
+                    document["vitrine-progress"].max = data['max']
+                    document["vitrine-progress"].value = data['value']
                 else:
-                    progress_bar.removeAttribute('max')
-                    progress_bar.removeAttribute('value')
+                    document["vitrine-progress"].removeAttribute('max')
+                    document["vitrine-progress"].removeAttribute('value')
 
             # Ugly hack to get an absolute URL from a relative one
             # https://stackoverflow.com/a/34020609/3991344
@@ -59,7 +57,6 @@ def update_result(*args, **kwargs):
 
             active_future = f(*args, **kwargs)
             def callback(future):
-                active_future.cancel()
                 active_future = None
                 try:
                     document.getElementById("vitrine").innerHTML = future.result().data.to_dict()['result']
