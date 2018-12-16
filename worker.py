@@ -8,6 +8,8 @@ import traceback
 from html import escape
 from browser.webworker import current_worker, Message
 
+BURGER_DATA_PREFIX = "https://pokechu22.github.io/Burger/"
+
 def progress_update(text, value=None, max=None):
     data = {'desc': text}
     if value is not None and max is not None:
@@ -18,7 +20,7 @@ def progress_update(text, value=None, max=None):
 
 
 def hamburglar(main, diff):
-    progress_update('Hamburglar: Importing hamburglar')
+    progress_update("Hamburglar: Importing hamburglar")
     import hamburglar_main
 
     def import_toppings():
@@ -41,7 +43,7 @@ def hamburglar(main, diff):
 
         return (AchivementsTopping, PacketsTopping, MetadataSerializersTopping, RecipesTopping, StatsTopping, TagsTopping, VersionTopping, BiomesTopping, BlocksTopping, EntitiesTopping, ObjectsTopping, ItemsTopping, SoundsTopping, TileEntitiesTopping, LanguageTopping)
 
-    progress_update('Hamburglar: Importing toppings')
+    progress_update("Hamburglar: Importing toppings")
     toppings = import_toppings()
 
     num_updates = 0
@@ -53,7 +55,7 @@ def hamburglar(main, diff):
     return hamburglar_main.compare(toppings, main[0], diff[0], progress_callback=progress_callback)
 
 def vitrine(data, all_data):
-    progress_update('Vitrine: Importing vitrine')
+    progress_update("Vitrine: Importing vitrine")
     import vitrine_main
 
     def import_toppings():
@@ -76,7 +78,7 @@ def vitrine(data, all_data):
 
         return (AchievementsTopping, BiomesTopping, EntitiesTopping, LanguageTopping, ObjectsTopping, PacketsTopping, MetadataSerializersTopping, RecipesTopping, SoundsTopping, StatsTopping, TagsTopping, TileEntities, VersionsTopping, BlocksTopping, ItemsTopping)
 
-    progress_update('Vitrine: Importing toppings')
+    progress_update("Vitrine: Importing toppings")
     toppings = import_toppings()
 
     num_updates = 0
@@ -89,10 +91,15 @@ def vitrine(data, all_data):
 
 def vitrine_worker(message_name, message, src):
     try:
-        print("vitrine_worker:", message)
         data = message.data.to_dict()
-        data = json.loads(data['data'])
-        result = vitrine(data, data)
+        print("vitrine_worker:", data)
+        main_ver = data["main"]
+        main_url = BURGER_DATA_PREFIX + main_ver + ".json"
+
+        with open(main_url) as fin:
+            main = json.loads(fin.read())
+
+        result = vitrine(main, main)
     except:
         traceback.print_exc()
         result = '<div class="entry"><h3>Error</h3><pre>' + escape(traceback.format_exc()) + '</pre></div>'
@@ -101,10 +108,24 @@ def vitrine_worker(message_name, message, src):
 
 def hamburglar_worker(message_name, message, src):
     try:
-        print("hamburglar_worker:", message)
         data = message.data.to_dict()
-        main = json.loads(data['main'])
-        diff = json.loads(data['diff'])
+        print("hamburglar_worker:", data)
+        main_ver = data["main"]
+        diff_ver = data["diff"]
+        main_url = BURGER_DATA_PREFIX + main_ver + ".json"
+        diff_url = BURGER_DATA_PREFIX + diff_ver + ".json"
+
+        print("Getting " + main_url)
+        with open(main_url) as fin:
+            print("Parsing")
+            main = json.loads(fin.read())
+        print("Got " + main_url)
+        print("Getting " + diff_url)
+        with open(diff_url) as fin:
+            print("Parsing")
+            diff = json.loads(fin.read())
+        print("Got " + diff_url)
+
         combined = hamburglar(main, diff)
         print("Halfway done")
         result = vitrine(combined, {0: main[0], 1: diff[0]})

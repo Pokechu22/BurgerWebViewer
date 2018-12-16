@@ -4,10 +4,54 @@ from asyncio.futures import CancelledError
 import traceback
 import json
 import sys
-worker = None
-active_future = None
 
 BURGER_DATA_PREFIX = "https://pokechu22.github.io/Burger/"
+
+worker = None
+active_future = None
+def call_worker(message, data):
+    global worker
+    global active_future
+
+    if not worker:
+        document["vitrine-progress-label"].textContent = "Starting worker..."
+        def progress_handler(message_name, message, src):
+            data = message.data.to_dict()
+            print("Progress update:", data)
+
+            document["vitrine-progress-label"].textContent = data['desc']
+            if 'value' in data:
+                document["vitrine-progress"].max = data['max']
+                document["vitrine-progress"].value = data['value']
+            else:
+                document["vitrine-progress"].removeAttribute('max')
+                document["vitrine-progress"].removeAttribute('value')
+
+        # Ugly hack to get an absolute URL from a relative one
+        # https://stackoverflow.com/a/34020609/3991344
+        url = html.A(href='worker.py').href
+        worker = webworker.WorkerParent(url, sys.path)
+        worker.bind_message('progress', progress_handler)
+
+    if active_future is not None:
+        active_future.cancel()
+        active_future = None
+
+    active_future = worker.post_message(webworker.Message(message, data), want_reply=True)
+    def callback(future):
+        if active_future is not active_future:
+            return
+
+        active_future = None
+        try:
+            document.getElementById("vitrine").innerHTML = future.result().data.to_dict()['result']
+            attach_tooltip_handlers()
+        except CancelledError:
+            pass
+        except:
+            traceback.print_exc()
+            document.getElementById("vitrine").innerHTML = '<div class="entry"><h3>Error callback</h3><pre>' + escape(traceback.format_exc()) + '</pre></div>'
+    active_future.add_done_callback(callback)
 
 def update_result(*args, **kwargs):
     left = document.select("#version-main select")[0].value
@@ -22,103 +66,18 @@ def update_result(*args, **kwargs):
     </div>
     '''
 
-    def updates_vitrine(f):
-        global worker
-
-        if not worker:
-            document["vitrine-progress-label"].textContent = "Starting worker..."
-            def progress_handler(message_name, message, src):
-                data = message.data.to_dict()
-                print("Progress update:", data)
-
-                document["vitrine-progress-label"].textContent = data['desc']
-                if 'value' in data:
-                    document["vitrine-progress"].max = data['max']
-                    document["vitrine-progress"].value = data['value']
-                else:
-                    document["vitrine-progress"].removeAttribute('max')
-                    document["vitrine-progress"].removeAttribute('value')
-
-            # Ugly hack to get an absolute URL from a relative one
-            # https://stackoverflow.com/a/34020609/3991344
-            url = html.A(href='worker.py').href
-            worker = webworker.WorkerParent(url, sys.path)
-            worker.bind_message('progress', progress_handler)
-
-        """
-        Decorator to update vitrine based on the future returned by the given method,
-        using a webworker.
-        """
-        def method(*args, **kwargs):
-            global active_future
-            if active_future is not None:
-                active_future.cancel()
-                active_future = None
-
-            active_future = f(*args, **kwargs)
-            def callback(future):
-                active_future = None
-                try:
-                    document.getElementById("vitrine").innerHTML = future.result().data.to_dict()['result']
-                    attach_tooltip_handlers()
-                except CancelledError:
-                    pass
-                except:
-                    traceback.print_exc()
-                    document.getElementById("vitrine").innerHTML = '<div class="entry"><h3>Error callback</h3><pre>' + escape(traceback.format_exc()) + '</pre></div>'
-            active_future.add_done_callback(callback)
-
-        return method
-
-    @updates_vitrine
-    def single(request):
-        print("Preparing vitrine worker")
-        data = request.responseText
-        return worker.post_message(webworker.Message('vitrine', {'data': data}), want_reply=True)
-
-    class BothCallback:
-        def __init__(self):
-            self.main = None
-            self.diff = None
-
-        def onmain(self, request):
-            self.main = request.responseText
-            if self.main is not None and self.diff is not None:
-                self.done()
-
-        def ondiff(self, request):
-            self.diff = request.responseText
-            if self.main is not None and self.diff is not None:
-                self.done()
-
-        @updates_vitrine
-        def done(self):
-            print("Preparing hamburglar worker")
-            return worker.post_message(webworker.Message('hamburglar', {'main': self.main, 'diff': self.diff}), want_reply=True)
-
     if left == "None" and right == "None":
         #window.location = "about"
         return
     elif left == "None":
-        req = ajax.ajax()
-        req.open("GET", BURGER_DATA_PREFIX + right + ".json", True)
-        req.bind("complete", single)
-        req.send()
+        data = { "main": right }
+        call_worker("vitrine", left)
     elif right == "None":
-        req = ajax.ajax()
-        req.open("GET", BURGER_DATA_PREFIX + left + ".json", True)
-        req.bind("complete", single)
-        req.send()
+        data = { "main": left }
+        call_worker("vitrine", data)
     else:
-        callback = BothCallback()
-        req = ajax.ajax()
-        req.open("GET", BURGER_DATA_PREFIX + left + ".json", True)
-        req.bind("complete", callback.onmain)
-        req.send()
-        req = ajax.ajax()
-        req.open("GET", BURGER_DATA_PREFIX + right + ".json", True)
-        req.bind("complete", callback.ondiff)
-        req.send()
+        data = { "main": left, "diff": right }
+        call_worker("hamburglar", data)
 
 document.select("#version-main select")[0].bind("change", update_result)
 document.select("#version-diff select")[0].bind("change", update_result)
