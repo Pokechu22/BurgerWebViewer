@@ -30,7 +30,7 @@ def call_worker(message, data):
         # Ugly hack to get an absolute URL from a relative one
         # https://stackoverflow.com/a/34020609/3991344
         url = html.A(href='worker.py').href
-        worker = webworker.WorkerParent(url, sys.path)
+        worker = webworker.WorkerParent(url, sys.path, brython_options={"debug": 1})
         worker.bind_message('progress', progress_handler)
 
     if active_future is not None:
