@@ -1,4 +1,5 @@
 import sys
+import os
 # HACK: Paths from main script aren't copied.  Transfer via sys.argv
 new_path = [loc for loc in sys.argv if loc not in sys.path]
 sys.path.extend(new_path)
@@ -8,7 +9,7 @@ import traceback
 from html import escape
 from browser.webworker import current_worker, Message
 
-BURGER_DATA_PREFIX = "https://pokechu22.github.io/Burger/"
+BURGER_DATA_PREFIX = os.environ["BURGER_DATA_PREFIX"]
 
 def progress_update(text, value=None, max=None):
     data = {'desc': text}
