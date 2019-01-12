@@ -30,7 +30,7 @@ def call_worker(message, data):
         # Ugly hack to get an absolute URL from a relative one
         # https://stackoverflow.com/a/34020609/3991344
         url = html.A(href='worker.py').href
-        worker = webworker.WorkerParent(url, sys.path, {"BURGER_DATA_PREFIX": BURGER_DATA_PREFIX}, brython_options={"debug": 1})
+        worker = webworker.WorkerParent(url, sys.path, {"BURGER_DATA_PREFIX": BURGER_DATA_PREFIX})
         worker.bind_message('progress', progress_handler)
 
     if active_future is not None:
@@ -48,6 +48,8 @@ def call_worker(message, data):
             attach_tooltip_handlers()
         except CancelledError:
             pass
+        except webworker.WorkerError as e:
+            document.getElementById("vitrine").innerHTML = '<div class="entry"><h3>Error callback</h3><pre>' + escape(str(e)) + '</pre></div>'
         except:
             traceback.print_exc()
             document.getElementById("vitrine").innerHTML = '<div class="entry"><h3>Error callback</h3><pre>' + escape(traceback.format_exc()) + '</pre></div>'
